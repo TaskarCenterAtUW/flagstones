@@ -1,0 +1,157 @@
+/* ==========================================================================
+   app.css: the viz's design tokens and base element styles.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color: text and background pairs meet WCAG 2.2 AA. */
+  --app-paper:        #F5F7F4;  /* page background */
+  --app-surface:      #FFFFFF;  /* raised panels and controls */
+  --app-panel:        #E9EFEA;  /* quiet inset panels */
+  --app-ink:          #24312B;  /* primary text */
+  --app-ink-soft:     #4A574F;  /* secondary text (7.0:1 on paper) */
+  --app-evergreen:    #2E5E4E;  /* headings and accents (6.9:1) */
+  --app-action:       #4B2E83;  /* buttons, controls, focus (9.7:1) */
+  --app-link:         #2456A6;  /* text links (6.6:1) */
+  --app-line:         #C8D2CB;  /* hairlines, quiet borders */
+  --app-error:        #8C2F26;  /* errors (7.6:1) */
+
+  /* Type */
+  --app-font-display: "Zilla Slab", "Rockwell", "Roboto Slab", serif;
+  --app-font-body:    "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --app-font-mono:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  /* Scale: 18px body, ~1.25 ratio, in rem against the browser's 16px
+     root so user font-size preferences scale everything. */
+  --app-text-xs:   0.8125rem;  /* 13px  captions, labels */
+  --app-text-sm:   0.9375rem;  /* 15px  secondary text */
+  --app-text-md:   1.125rem;   /* 18px  body */
+  --app-text-lg:   1.4375rem;  /* 23px  h3 */
+  --app-text-xl:   1.8125rem;  /* 29px  h2 */
+  --app-text-2xl:  2.25rem;    /* 36px  h1 on narrow screens */
+  --app-text-3xl:  2.8125rem;  /* 45px  h1 */
+
+  /* Space: 4px base */
+  --app-s1: 0.25rem;  --app-s2: 0.5rem;   --app-s3: 0.75rem;
+  --app-s4: 1rem;     --app-s6: 1.5rem;   --app-s8: 2rem;
+  --app-s12: 3rem;    --app-s16: 4rem;    --app-s24: 6rem;
+
+  /* Shape & stroke */
+  --app-radius: 6px;           /* one radius everywhere */
+  --app-shadow: 0 2px 12px rgba(36, 49, 43, 0.18); /* ink-tinted, for floating controls */
+  --app-measure: 68ch;
+}
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+* { box-sizing: border-box; margin: 0; }
+
+html { color-scheme: light; }
+
+/* Bootstrap and its reboot load first and normalize the elements. This
+   file loads after them, and the reset below removes reboot's default
+   margins so each component sets its own spacing. */
+p, h1, h2, h3, h4, h5, h6, ul, ol, dl, hr, pre { margin: 0; }
+
+/* Reboot sets this too. It stays so the file works without Bootstrap. */
+button, input, optgroup, select, textarea { font: inherit; }
+
+body {
+  background: var(--app-paper);
+  color: var(--app-ink);
+  font-family: var(--app-font-body);
+  font-size: var(--app-text-md);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: var(--app-font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+h1 { font-size: var(--app-text-3xl); }
+h2 { font-size: var(--app-text-xl); margin-block: var(--app-s12) var(--app-s4); }
+h3 { font-size: var(--app-text-lg); margin-block: var(--app-s6) var(--app-s2); }
+
+p, li { max-width: var(--app-measure); }
+p + p { margin-top: var(--app-s3); }
+
+a {
+  color: var(--app-link);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+/* On hover the thicker underline sits 4px down, below the descenders, so
+   skip-ink does not break it into dashes. */
+a:hover { text-decoration-thickness: 3px; text-underline-offset: 4px; }
+
+code {
+  font-family: var(--app-font-mono);
+  font-size: 0.85em;
+  background: var(--app-panel);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+/* A solid focus ring on every focusable element. */
+:focus-visible {
+  outline: 3px solid var(--app-action);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* Bootstrap's .btn replaces the outline with a translucent shadow ring that
+   no theme variable controls. This rule, loaded after Bootstrap, puts the
+   solid ring back. */
+.btn:focus-visible {
+  outline: 3px solid var(--app-action);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.app-skip-link {
+  position: absolute;
+  left: var(--app-s4);
+  top: -4rem;
+  background: var(--app-ink);
+  color: var(--app-paper);
+  padding: var(--app-s2) var(--app-s4);
+  border-radius: var(--app-radius);
+  z-index: 10;
+  transition: top 120ms ease-out;
+}
+.app-skip-link:focus-visible { top: var(--app-s4); }
+
+/* --------------------------------------------------------------------------
+   3. Components
+   -------------------------------------------------------------------------- */
+
+/* Buttons are Bootstrap's btn btn-primary and btn btn-outline-primary,
+   themed in app-bootstrap.css. */
+
+.app-eyebrow {
+  font-size: var(--app-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--app-evergreen);
+}
+
+/* The mono line under the city menu: the bundle's name, osmnx version,
+   node count and CRS. */
+.app-provenance {
+  font-family: var(--app-font-mono);
+  font-size: var(--app-text-xs);
+  color: var(--app-ink-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 40rem) {
+  h1 { font-size: var(--app-text-2xl); }
+}

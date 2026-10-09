@@ -1,0 +1,31 @@
+name: publish
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  # A tag can sit on a commit CI never ran on, so the release runs the
+  # suite itself before anything goes to PyPI.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+      - run: uv sync --locked --python 3.12 --extra osm --extra dev
+      - run: uv run --no-sync pytest -q
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    # A job-level block replaces the workflow's, so contents: read repeats.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+      - name: Check the tag matches the version
+        run: test "v$(uv run --no-project python -c 'import re,pathlib;print(re.search(r"__version__ = \"(.+)\"", pathlib.Path("src/flagstones/__init__.py").read_text())[1])')" = "$GITHUB_REF_NAME"
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2

@@ -1,0 +1,66 @@
+[project]
+name = "flagstones"
+dynamic = ["version"]
+license = "MIT"
+description = "Voronoi tiles seeded on consolidated road intersections, with stable grid-cell ids"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "shapely>=2.1",
+    "pyproj>=3.6",
+    "networkx>=3.2",
+]
+
+[project.optional-dependencies]
+osm = ["osmnx>=2.0", "geopandas>=1.0", "tomli>=2; python_version < '3.11'"]
+parquet = ["pyarrow>=15"]
+dev = [
+    "pytest>=8",
+    "ruff>=0.6",
+    "black>=24",
+    "isort>=5.13",
+    "flagstones[parquet]",
+]
+
+[project.scripts]
+flagstones = "flagstones.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/flagstones/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/flagstones"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/viz"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint.per-file-ignores]
+# These modules pair consecutive bounds with zip, which RUF007 flags.
+"src/flagstones/consolidate.py" = ["RUF007"]
+"src/flagstones/clip.py" = ["RUF007"]
+
+[tool.uv]
+# Pinned dev stack, so the golden tests compare byte for byte.
+constraint-dependencies = [
+    "shapely==2.1.2; python_full_version >= '3.14'",
+    "numpy==2.5.1; python_full_version >= '3.14'",
+    "pyproj==3.7.2; python_full_version >= '3.14'",
+    "pandas==3.0.5; python_full_version >= '3.14'",
+    "geopandas==1.1.4; python_full_version >= '3.14'",
+    "networkx==3.6.1; python_full_version >= '3.14'",
+]

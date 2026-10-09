@@ -1,0 +1,60 @@
+/* ==========================================================================
+   app-map.css: the MapLibre controls and the layer key. It loads after
+   maplibre-gl.css and app.css. app-basemap.json styles the map itself.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. MapLibre controls and attribution
+   Controls sit on the surface color with a hairline border and the
+   floating shadow, with 44px targets and the app's focus ring.
+   -------------------------------------------------------------------------- */
+.maplibregl-ctrl-group {
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+}
+.maplibregl-ctrl-group button {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+}
+.maplibregl-ctrl-group button + button { border-top: 1px solid var(--app-line); }
+.maplibregl-ctrl-group button:hover { background: var(--app-panel); }
+.maplibregl-ctrl button:focus-visible {
+  outline: 3px solid var(--app-action);
+  outline-offset: -4px;
+  box-shadow: none;
+  border-radius: var(--app-radius);
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(245, 247, 244, 0.88); /* paper at 88% */
+  font-family: var(--app-font-body);
+  font-size: var(--app-text-xs);
+  color: var(--app-ink-soft);
+  padding: 0 var(--app-s2);
+}
+.maplibregl-ctrl-attrib a { color: var(--app-link); }
+
+.maplibregl-ctrl-scale {
+  background: rgba(245, 247, 244, 0.88);
+  border: 1px solid var(--app-ink-soft);
+  border-top: none;
+  color: var(--app-ink-soft);
+  font-family: var(--app-font-mono);
+  font-size: var(--app-text-xs);
+}
+
+/* --------------------------------------------------------------------------
+   2. Layer key
+   -------------------------------------------------------------------------- */
+.app-map-key {
+  background: var(--app-surface);
+  border: 1px solid var(--app-line);
+  border-radius: var(--app-radius);
+  padding: var(--app-s3) var(--app-s4);
+  display: grid;
+  gap: var(--app-s2);
+  font-size: var(--app-text-xs);
+}

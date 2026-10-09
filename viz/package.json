@@ -1,0 +1,29 @@
+{
+  "name": "flagstones-viz",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Interactive intersection tile viewer, with the JavaScript engine the parity tests hold to the Python library.",
+  "exports": {
+    "./engine": "./src/engine/index.js"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "test": "node --test test/*.test.js",
+    "parity": "node --test test/parity.test.js",
+    "smoke": "node --test test/smoke.test.js",
+    "verify:webgl": "node scripts/verify-webgl.mjs"
+  },
+  "dependencies": {
+    "d3-delaunay": "^6.0.4",
+    "maplibre-gl": "5.24.0",
+    "polygon-clipping": "^0.15.7",
+    "proj4": "^2.15.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0",
+    "vite": "^7.0.0"
+  }
+}

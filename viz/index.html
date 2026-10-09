@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flagstones viz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Zilla+Slab:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/design/app-bootstrap.css">
+<link rel="stylesheet" href="/design/app.css">
+<link rel="stylesheet" href="/design/app-map.css">
+<link rel="stylesheet" href="/src/styles/viz.css">
+</head>
+<body class="tp-app">
+<a class="app-skip-link" href="#results">Skip to results</a>
+<aside class="tp-sidebar tp-sidebar--left" aria-label="Layers and parameters">
+  <div class="tp-sidebar-head">
+    <p class="app-eyebrow">Tile viz</p>
+    <h1 class="tp-title">Flagstones</h1>
+  </div>
+  <section id="layer-key" aria-labelledby="layer-key-h">
+    <h2 id="layer-key-h" class="tp-h2">Layers</h2>
+  </section>
+  <section id="params" aria-labelledby="params-h">
+    <h2 id="params-h" class="tp-h2">Parameters</h2>
+  </section>
+</aside>
+<main class="tp-map-wrap">
+  <div id="map" class="tp-map" role="region"
+        aria-label="Map of intersection tiles. The results panel lists the same figures as text."></div>
+</main>
+<aside class="tp-sidebar tp-sidebar--right" id="results" aria-label="Results">
+  <div class="tp-sidebar-head">
+    <label class="tp-field"><span>City</span>
+      <select id="city" class="form-select"></select>
+    </label>
+    <p class="app-provenance" id="provenance">loading</p>
+  </div>
+  <section id="stats" aria-labelledby="stats-h" aria-live="polite">
+    <h2 id="stats-h" class="tp-h2">Statistics</h2>
+  </section>
+  <section id="inspect" aria-labelledby="inspect-h">
+    <h2 id="inspect-h" class="tp-h2">Inspect</h2>
+    <p class="tp-muted" id="inspect-empty">Click a tile or a node.</p>
+  </section>
+</aside>
+<script type="module" src="/src/app/main.js"></script>
+</body>
+</html>

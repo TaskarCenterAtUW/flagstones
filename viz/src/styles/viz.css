@@ -1,0 +1,55 @@
+/* public/design/app.css defines these tokens. */
+.tp-app {
+  display: grid;
+  grid-template-columns: 21rem minmax(0, 1fr) 23rem;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "left map right";
+  height: 100vh;
+  overflow: hidden;
+}
+.tp-sidebar-head { position: sticky; top: 0; z-index: 1; background: var(--app-paper); }
+.tp-title { margin: 0 0 var(--app-s2); }
+.tp-sidebar {
+  overflow-y: auto;
+  padding: var(--app-s4);
+  background: var(--app-paper);
+  display: grid;
+  gap: var(--app-s6);
+  align-content: start;
+}
+.tp-sidebar--left { grid-area: left; border-right: 1px solid var(--app-line); }
+.tp-sidebar--right { grid-area: right; border-left: 1px solid var(--app-line); }
+.tp-map-wrap { grid-area: map; position: relative; min-width: 0; }
+/* MapLibre ships `.maplibregl-map { position: relative }`, which the
+   bundle places below this file, so it outranks a bare class. The
+   container drops to 0 height and the canvas falls back to 300 px. An
+   id selector beats the library rule on specificity. */
+ #map.tp-map { position: absolute; inset: 0; }
+.tp-h2 { font-family: var(--app-font-display); font-size: var(--app-text-md); font-weight: 600; margin-bottom: var(--app-s2); }
+.tp-field { display: grid; gap: var(--app-s1); font-size: var(--app-text-sm); }
+.tp-muted { color: var(--app-ink-soft); font-size: var(--app-text-sm); }
+.tp-key { list-style: none; display: grid; gap: var(--app-s1); position: static; }
+.tp-key-row { display: flex; align-items: center; gap: var(--app-s2); min-height: 44px; font-size: var(--app-text-sm); cursor: pointer; }
+.tp-swatch { width: 28px; height: 14px; flex: none; }
+.tp-params { display: grid; gap: var(--app-s4); }
+.tp-control label { display: flex; justify-content: space-between; align-items: baseline; font-size: var(--app-text-sm); font-weight: 700; }
+.tp-readout { font-family: var(--app-font-mono); font-weight: 400; color: var(--app-ink-soft); }
+.tp-help { display: block; color: var(--app-ink-soft); font-size: var(--app-text-xs); margin-top: var(--app-s1); }
+.tp-grid-warn { white-space: pre-line; }
+.tp-grid-warn--colliding { color: var(--app-error); }
+.tp-details { border: 1px solid var(--app-line); border-radius: var(--app-radius); padding: var(--app-s2) var(--app-s3); display: grid; gap: var(--app-s3); }
+.tp-details summary { font-size: var(--app-text-sm); cursor: pointer; }
+.tp-control fieldset { border: 0; padding: 0; display: grid; gap: var(--app-s1); }
+.tp-control legend { font-size: var(--app-text-sm); font-weight: 700; padding: 0; margin-bottom: var(--app-s1); }
+.tp-control .form-check-label { font-weight: 400; }
+.tp-stats { font-size: var(--app-text-xs); font-variant-numeric: tabular-nums; }
+.tp-stats th[scope="row"] { font-weight: 400; color: var(--app-ink-soft); }
+.tp-extras { margin-top: var(--app-s3); }
+.tp-kv { display: grid; grid-template-columns: max-content 1fr; gap: var(--app-s1) var(--app-s3); font-size: var(--app-text-xs); }
+.tp-kv dt { color: var(--app-ink-soft); }
+.tp-kv dd { font-family: var(--app-font-mono); overflow-wrap: anywhere; }
+.tp-nudge { display: grid; grid-template-columns: 1fr 1fr; gap: var(--app-s2); margin-top: var(--app-s3); }
+.tp-nudge .btn { grid-column: span 1; }
+.tp-map-wrap[data-busy]::after { content: "recomputing"; position: absolute; top: var(--app-s3); left: 50%; transform: translateX(-50%); background: var(--app-surface); border: 1px solid var(--app-line); border-radius: var(--app-radius); padding: var(--app-s1) var(--app-s3); font-size: var(--app-text-xs); box-shadow: var(--app-shadow); z-index: 2; pointer-events: none; }
+.tp-key-row[data-too-many] span::after { content: " (zoom in)"; color: var(--app-ink-soft); }
+@media (prefers-reduced-motion: reduce) { .tp-app * { transition: none !important; animation: none !important; } }

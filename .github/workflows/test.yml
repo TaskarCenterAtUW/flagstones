@@ -1,0 +1,105 @@
+name: test
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  python:
+    name: python (${{ matrix.name }})
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: lowest-direct
+            python: "3.10"
+            install: uv pip install --resolution lowest-direct -e ".[osm,dev]"
+          - name: numpy1-pandas22-py310
+            python: "3.10"
+            install: uv pip install -e ".[osm,dev]" "numpy<2" "pandas>=2.2,<2.3"
+          - name: numpy1-latest-osmnx-py312
+            python: "3.12"
+            install: uv pip install --upgrade -e ".[osm,dev]" "numpy<2" osmnx
+          - name: locked
+            python: "3.12"
+            install: uv sync --locked --python 3.12 --extra osm --extra dev
+          - name: locked-windows
+            os: windows-latest
+            python: "3.12"
+            install: uv sync --locked --python 3.12 --extra osm --extra dev
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+      - name: Install
+        run: |
+          case "${{ matrix.name }}" in
+            locked*) ;;
+            *) uv venv --python ${{ matrix.python }} ;;
+          esac
+          ${{ matrix.install }}
+      - name: Report the resolved stack
+        run: uv run --no-sync python -c "import numpy, pandas, shapely, osmnx, geopandas; print(numpy.__version__, pandas.__version__, shapely.__version__, osmnx.__version__, geopandas.__version__)"
+      - if: matrix.name == 'locked'
+        run: uv run --no-sync ruff check .
+      - if: matrix.name == 'locked'
+        run: uv run --no-sync black --check .
+      - if: matrix.name == 'locked'
+        run: uv run --no-sync isort --check-only .
+      - run: uv run --no-sync pytest -q
+  core-import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+      - run: |
+          uv venv --python 3.10
+          uv pip install -e .
+          uv run --no-sync python -c "import flagstones, sys; assert 'osmnx' not in sys.modules and 'geopandas' not in sys.modules"
+  viz:
+    name: viz (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: viz/package-lock.json
+      - run: uv sync --extra osm
+      - run: uv run --no-sync flagstones viz-export --graph tests/fixtures/toppenish.graphml --name Toppenish --out viz/data
+      # The reference runs at one clip buffer, so a second bundle at the
+      # 100 m stop puts the narrowest clip's cells through the parity tests.
+      - name: Export Toppenish at the 100 m clip buffer
+        run: |
+          printf '[tiles]\nclip_buffer_m = 100.0\n' > "$RUNNER_TEMP/clip-100.toml"
+          uv run --no-sync flagstones viz-export --graph tests/fixtures/toppenish.graphml --name "Toppenish 100" --params "$RUNNER_TEMP/clip-100.toml" --out viz/data
+      - name: Fail when the export left no bundle
+        run: |
+          ls viz/data
+          shopt -s nullglob
+          found=0
+          for f in viz/data/*.json; do
+            [ "$(basename "$f")" = index.json ] || found=1
+          done
+          if [ "$found" -ne 1 ]; then
+            echo "viz-export wrote no bundle json to viz/data; the parity tests would silently skip"
+            exit 1
+          fi
+          test -f viz/data/toppenish-100.json || { echo "the 100 m bundle is missing"; exit 1; }
+      - run: npm ci
+        working-directory: viz
+      - run: npm test
+        working-directory: viz

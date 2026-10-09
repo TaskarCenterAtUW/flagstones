@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+dist/
+viz/node_modules/
+viz/dist/
+viz/data/
+viz/screenshots/
+viz/cache/
+*.dev.log
+core.*
+/cache/

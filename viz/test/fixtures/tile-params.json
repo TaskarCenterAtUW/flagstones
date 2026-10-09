@@ -1,0 +1,12 @@
+{
+ "clip_buffer_m": 250.0,
+ "consolidation_tolerance_m": 17.0,
+ "contract_transitions": true,
+ "degree_filter_min": 3,
+ "inheritance_radius_m": 34.0,
+ "seed_grid_m": 24.0,
+ "snap_centroid": true,
+ "transition_opposite_min_deg": 120.0,
+ "transition_require_same_road": true,
+ "transition_spread_max_deg": 60.0
+}
